@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Physics Photo Puzzle - 物理画像パズルゲーム</title>
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Background grid decoration -->
+    <div class="bg-decoration"></div>
+
+    <div id="app-container">
+      <!-- 1. TITLE SCREEN -->
+      <div id="title-screen" class="screen active">
+        <div class="glass-panel main-menu">
+          <div class="logo-area">
+            <div class="logo-icon"><i class="fa-solid fa-puzzle-piece"></i></div>
+            <h1>Physics Photo Puzzle</h1>
+            <p class="subtitle">物理エンジンを使った新感覚画像パズル</p>
+          </div>
+          
+          <div class="preview-container">
+            <div class="preview-image-wrapper">
+              <img id="menu-preview-img" src="puzzle.png" alt="Puzzle Preview">
+              <div class="preview-overlay"></div>
+            </div>
+          </div>
+
+          <div class="setup-section">
+            <h3><i class="fa-solid fa-sliders"></i> 難易度を選択</h3>
+            <div class="difficulty-options">
+              <button class="diff-btn active" data-cols="3" data-rows="2">
+                <span class="diff-name">Easy</span>
+                <span class="diff-grid">3 × 2 (6ピース)</span>
+              </button>
+              <button class="diff-btn" data-cols="4" data-rows="3">
+                <span class="diff-name">Medium</span>
+                <span class="diff-grid">4 × 3 (12ピース)</span>
+              </button>
+              <button class="diff-btn" data-cols="5" data-rows="4">
+                <span class="diff-name">Hard</span>
+                <span class="diff-grid">5 × 4 (20ピース)</span>
+              </button>
+              <button class="diff-btn" data-cols="6" data-rows="5">
+                <span class="diff-name">Expert</span>
+                <span class="diff-grid">6 × 5 (30ピース)</span>
+              </button>
+            </div>
+
+            <div class="mode-options">
+              <label class="toggle-container">
+                <input type="checkbox" id="rotation-toggle">
+                <span class="checkmark"></span>
+                ピースの回転を有効にする (高難易度)
+              </label>
+            </div>
+          </div>
+
+          <button id="start-game-btn" class="primary-btn">
+            <i class="fa-solid fa-play"></i> ゲームスタート
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. GAME SCREEN -->
+      <div id="game-screen" class="screen">
+        <div class="game-layout">
+          <!-- Top Control Bar -->
+          <div class="glass-panel game-header">
+            <div class="header-left">
+              <button id="back-to-menu-btn" class="icon-btn" title="タイトルに戻る">
+                <i class="fa-solid fa-arrow-left"></i>
+              </button>
+              <div class="puzzle-title">Playing Puzzle</div>
+            </div>
+            
+            <div class="stats-container">
+              <div class="stat-box">
+                <span class="stat-label"><i class="fa-regular fa-clock"></i> TIME</span>
+                <span id="game-timer" class="stat-value">00:00.00</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-label"><i class="fa-solid fa-puzzle-piece"></i> PROGRESS</span>
+                <span id="progress-value" class="stat-value">0 / 0</span>
+              </div>
+            </div>
+
+            <div class="header-right">
+              <button id="hint-btn" class="action-btn secondary" title="見本を隠す/表示">
+                <i class="fa-regular fa-eye"></i> ヒント
+              </button>
+              <button id="reset-btn" class="action-btn secondary" title="パズルをやり直す">
+                <i class="fa-solid fa-rotate-right"></i> リセット
+              </button>
+            </div>
+          </div>
+
+          <!-- Main Game Area -->
+          <div class="game-body">
+            <div id="canvas-container">
+              <!-- Canvas will be inserted here by JS -->
+            </div>
+          </div>
+          
+          <!-- Instructions -->
+          <div class="game-footer">
+            <p><i class="fa-solid fa-circle-info"></i> ピースをドラッグして、上部中央の正しい位置へはめ込んでください。下部のトレイには重力があります。</p>
+            <p id="rotation-instruction" style="display: none;"><i class="fa-solid fa-arrows-rotate"></i> ピースを <strong>タップ（ポンと押す）</strong> するか、ドラッグ中に <strong>右クリック / スペースキー / 2本指タップ</strong> で回転できます。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. CLEAR SCREEN -->
+      <div id="clear-screen" class="screen">
+        <div class="glass-panel clear-panel">
+          <div class="trophy-icon">
+            <i class="fa-solid fa-trophy"></i>
+          </div>
+          <h2>Congratulations!</h2>
+          <p class="clear-message">見事に画像を完成させました！</p>
+          
+          <div class="result-card">
+            <div class="result-row">
+              <span class="result-label">かかった時間</span>
+              <span id="final-time" class="result-value">00:00.00</span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">難易度</span>
+              <span id="final-difficulty" class="result-value">Medium (4x3)</span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">回転設定</span>
+              <span id="final-rotation" class="result-value">なし</span>
+            </div>
+          </div>
+
+          <div class="clear-actions">
+            <button id="retry-btn" class="primary-btn">
+              <i class="fa-solid fa-rotate-right"></i> もう一度遊ぶ
+            </button>
+            <button id="menu-btn" class="action-btn secondary">
+              <i class="fa-solid fa-house"></i> メニューに戻る
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Matter.js and Custom Script -->
+    <script src="matter.min.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
